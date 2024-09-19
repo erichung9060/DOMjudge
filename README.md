@@ -1,107 +1,76 @@
-version: '3'
+# Installation-Guide-for-DOMjudge
 
-services:
-        dj-mariadb:
-                image: mariadb
-                volumes:
-                        #「:」前面的部分是備份資料庫的路徑，可以避免重新部署後資料消失
-                        - /home/baisp/backup:/var/lib/mysql
-                environment:
-                        - MYSQL_ROOT_PASSWORD=rootpw
-                        - MYSQL_DATABASE=domjudge
-                        - MYSQL_USER=domjudge
-                        - MYSQL_PASSWORD=djpw
-                ports:
-                        - 13306:3306
-                command:
-                        --max-connections=1000
-        
-        dj-domserver:
-                image: domjudge/domserver:latest
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - MYSQL_HOST=mariadb
-                        - MYSQL_ROOT_PASSWORD=rootpw
-                        - MYSQL_DATABASE=domjudge
-                        - MYSQL_USER=domjudge
-                        - MYSQL_PASSWORD=djpw
-                ports:
-                        #「:」前面的port number是外部連進去的port，可以自由設置
-                        - 80:80
-                links:
-                        - dj-mariadb:mariadb
-        #judgehost可以依需要多設幾個，名字、hostname、DAEMON_ID記得改
-        dj-judgehost_0:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-0
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=0
-                links:
-                        - dj-domserver:domserver
-        dj-judgehost_1:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-1
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=1
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                links:
-                        - dj-domserver:domserver
-        dj-judgehost_2:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-2
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=2
-                links:
-                        - dj-domserver:domserver
-        dj-judgehost_3:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-3
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=3
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                links:
-                        - dj-domserver:domserver
-        dj-judgehost_4:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-4
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=4
-                links:
-                        - dj-domserver:domserver
-        dj-judgehost_5:
-                image: domjudge/judgehost:latest
-                privileged: true
-                hostname: judgedaemon-5
-                volumes:
-                        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-                environment:
-                        - CONTAINER_TIMEZONE=Asia/Taipei
-                        - DAEMON_ID=5
-                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
-                links:
-                        - dj-domserver:domserver
+
+DOMjudge is a contest adjudication program that works well as a simulation platform for CPE or programming competitions.
+
+ ![sample-2](/sample-2.jpg)
+ ![sample-1](/sample-1.jpg)
+
+### Installation Environment
+
+- Debian
+
+### Installation Process
+
+1. Modify `/etc/default/grub`:
+   ```
+   GRUB_CMDLINE_LINUX_DEFAULT="quiet cgroup_enable=memory swapaccount=1 systemd.unified_cgroup_hierarchy=0"
+   ```
+
+2. Update Grub:
+   ```
+   sudo update-grub
+   ```
+
+3. Reboot:
+   ```
+   sudo reboot
+   ```
+
+4. Execute docker-compose.yml:
+   ```
+   sudo docker-compose up -d
+   ```
+
+5. Obtain admin password:
+   ```
+   sudo docker exec -it domjudge_dj-domserver_1 cat /opt/domjudge/domserver/etc/initial_admin_password.secret
+   ```
+   Note: Use `sudo docker ps` to check the domserver container name.
+
+6. If the output is `[unknown]`, reset admin password:
+   ```
+   sudo docker exec -it domjudge_dj-domserver_1 /opt/domjudge/domserver/webapp/bin/console domjudge:reset-user-password admin
+   ```
+
+7. Log in to the dashboard, click on user, and change the password for "judgeaemons" to `ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B`.
+   
+
+   ![Dashboard](https://user-images.githubusercontent.com/50062014/199965217-f47463a5-aa03-4bf8-acbc-eaec38260889.png)
+
+
+8. Check for additional Judgehosts; use `docker container logs` if necessary.
+
+### Troubleshooting
+
+If encountering issues such as:
+- Grub settings not configured
+- Unable to pass 401 authentication
+- URL cannot reach the server
+
+Follow the additional steps provided in the installation process to address these issues.
+
+### Additional Notes
+
+- Update paths and passwords in docker-compose.yml as needed.
+- Ensure consistency in passwords across all Judgehosts and user sections.
+- If the log displays an error, obtain a new restAPI password:
+  ```
+  docker exec -it domserver cat /opt/domjudge/domserver/etc/restapi.secret
+  ```
+  Replace `JUDGEDAEMON_PASSWORD` in docker-compose.yml with the new password and restart:
+  ```
+  docker-compose up -d
+  ```
+
+This installation guide is also available at [https://sectools.tw/domjudge/](https://sectools.tw/domjudge/).
