@@ -40,7 +40,7 @@ DOMjudge is a contest adjudication program that works well as a simulation platf
 
 6. If the output is `[unknown]`, reset admin password:
    ```
-   sudo docker exec -it domserver_container_name /opt/domjudge/domserver/webapp/bin/console domjudge:reset-user-password admin
+   sudo docker exec -it domjudge_dj-domserver_1 /opt/domjudge/domserver/webapp/bin/console domjudge:reset-user-password admin
    ```
 
 7. Log in to the dashboard, click on user, and change the password for "judgeaemons" to `9NQLNMcLCr8zu0gB`.
