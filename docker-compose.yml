@@ -5,7 +5,7 @@ services:
                 image: mariadb
                 volumes:
                         #「:」前面的部分是備份資料庫的路徑，可以避免重新部署後資料消失
-                        - /absolute/path/to/backup/directory:/var/lib/mysql
+                        - /home/baisp/backup:/var/lib/mysql
                 environment:
                         - MYSQL_ROOT_PASSWORD=rootpw
                         - MYSQL_DATABASE=domjudge
@@ -15,7 +15,7 @@ services:
                         - 13306:3306
                 command:
                         --max-connections=1000
-        
+                        
         dj-domserver:
                 image: domjudge/domserver:latest
                 volumes:
@@ -32,6 +32,7 @@ services:
                         - 80:80
                 links:
                         - dj-mariadb:mariadb
+                        
         #judgehost可以依需要多設幾個，名字、hostname、DAEMON_ID記得改
         dj-judgehost_0:
                 image: domjudge/judgehost:latest
@@ -40,11 +41,9 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=0
-                        #DOMSERVER_BASEURL可以指定domserver的IP，從而在另一個終端開judgehost
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
         dj-judgehost_1:
@@ -54,10 +53,9 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=1
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
         dj-judgehost_2:
@@ -67,10 +65,9 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=2
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
         dj-judgehost_3:
@@ -80,10 +77,9 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=3
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
         dj-judgehost_4:
@@ -93,10 +89,9 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=4
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
         dj-judgehost_5:
@@ -106,9 +101,8 @@ services:
                 volumes:
                         - /sys/fs/cgroup:/sys/fs/cgroup:ro
                 environment:
+                        - JUDGEDAEMON_PASSWORD=ISmfuM6JslmSG8xqpvqR5dmtLIMrDx5B
                         - CONTAINER_TIMEZONE=Asia/Taipei
                         - DAEMON_ID=5
-                        - JUDGEDAEMON_PASSWORD=9NQLNMcLCr8zu0gB
-                        - DOMSERVER_BASEURL=http://127.0.0.1/
                 links:
                         - dj-domserver:domserver
