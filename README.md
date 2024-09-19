@@ -34,9 +34,9 @@ DOMjudge is a contest adjudication program that works well as a simulation platf
 
 5. Obtain admin password:
    ```
-   sudo docker exec -it domserver_container_name cat /opt/domjudge/domserver/etc/initial_admin_password.secret
+   sudo docker exec -it domjudge_dj-domserver_1 cat /opt/domjudge/domserver/etc/initial_admin_password.secret
    ```
-   Note: Use `sudo docker ps` to check the container name.
+   Note: Use `sudo docker ps` to check the domserver container name.
 
 6. If the output is `[unknown]`, reset admin password:
    ```
