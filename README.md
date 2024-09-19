@@ -49,7 +49,10 @@ DOMjudge is a contest adjudication program that works well as a simulation platf
    ![Dashboard](https://user-images.githubusercontent.com/50062014/199965217-f47463a5-aa03-4bf8-acbc-eaec38260889.png)
 
 
-8. Check for additional Judgehosts; use `docker container logs` if necessary.
+8. Last, Execute docker-compose.yml again:
+   ```
+   sudo docker-compose up -d
+   ```
 
 ### Troubleshooting
 
